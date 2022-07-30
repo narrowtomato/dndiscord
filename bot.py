@@ -62,20 +62,56 @@ async def on_message(message):
 
         # Roll dice with !roll
         if user_message.lower().split(' ')[0] == '!roll':
-            try:
-                # Get roll components
-                selected_roll = user_message.lower().split(' ')[1]
-                num_dice = user_message.lower().split(' ')[1].split('d')[0]
-                type_dice = user_message.lower().split(' ')[1].split('d')[1]
-                total_roll = 0
 
-                # Loop through, calculate the roll and build the message
-                msg = f"**{username}** rolled **{selected_roll}**: "
-                for i in range(int(num_dice)):
-                    roll = random.randint(1, int(type_dice))
-                    total_roll += roll
-                    msg += f"+ {str(roll)} "
-                msg += f"= **{total_roll}**"
+            try:
+                # If there is no other input, roll a d20
+                if len(user_message.lower().split(' ')) == 1:
+                    # Start of message
+                    msg = f"**{username}** rolled **1d20**: "
+
+                    roll = random.randint(1, 20)
+                    msg += f"**{roll}**"
+                elif user_message.lower().split(' ')[1].lower() == 'adv':
+                    # Start of message
+                    msg = f"**{username}** rolled with advantage: "
+
+                    roll1 = random.randint(1, 20)
+                    roll2 = random.randint(1, 20)
+                    msg += f"{roll1} & {roll2} : "
+                    if roll1 > roll2:
+                        msg += f"**{roll1}** is higher"
+                    else:
+                        msg += f"**{roll2}** is higher"
+                elif user_message.lower().split(' ')[1].lower() == 'dis':
+                    # Start of message
+                    msg = f"**{username}** rolled with disadvantage: "
+
+                    roll1 = random.randint(1, 20)
+                    roll2 = random.randint(1, 20)
+                    msg += f"{roll1} & {roll2} : "
+                    if roll1 < roll2:
+                        msg += f"**{roll1}** is lower"
+                    else:
+                        msg += f"**{roll2}** is lower"
+                else:
+                    # Get roll components
+                    selected_roll = user_message.lower().split(' ')[1]
+                    num_dice = user_message.lower().split(' ')[1].split('d')[0]
+                    type_dice = user_message.lower().split(' ')[1].split('d')[1]
+                    total_roll = 0
+
+                    # Start of message
+                    msg = f"**{username}** rolled **{selected_roll}**: "
+
+                    # Loop through, calculate the roll and build the message
+                    for i in range(int(num_dice)):
+                        roll = random.randint(1, int(type_dice))
+                        total_roll += roll
+                        if i > 0:
+                            msg += f"+ {str(roll)} "
+                        else:
+                            msg += f"{str(roll)} "
+                    msg += f"= **{total_roll}**"
 
             # If roll could not be calculated from input
             except:
