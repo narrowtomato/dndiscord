@@ -2,7 +2,7 @@
 TOKEN = ''
 
 # This is the channel where you want bot commands to be recognized
-BOT_CHANNEL = 'dndbot'
+BOT_CHANNEL = ''
 
 import discord
 import random
@@ -43,6 +43,8 @@ async def on_message(message):
 
     # Messages in the bot channel
     if message.channel.name == BOT_CHANNEL:
+
+        # Show spells with !spell
         if user_message.lower().split(' ')[0] == '!spell':
             spell_found = False
             for spell in spells["allSpells"]:
@@ -57,5 +59,30 @@ async def on_message(message):
                     spell_found = True
             if not spell_found:
                 await message.channel.send("Spell not found.")
+
+        # Roll dice with !roll
+        if user_message.lower().split(' ')[0] == '!roll':
+            try:
+                # Get roll components
+                selected_roll = user_message.lower().split(' ')[1]
+                num_dice = user_message.lower().split(' ')[1].split('d')[0]
+                type_dice = user_message.lower().split(' ')[1].split('d')[1]
+                total_roll = 0
+
+                # Loop through, calculate the roll and build the message
+                msg = f"**{username}** rolled **{selected_roll}**: "
+                for i in range(int(num_dice)):
+                    roll = random.randint(1, int(type_dice))
+                    total_roll += roll
+                    msg += f"+ {str(roll)} "
+                msg += f"= **{total_roll}**"
+
+            # If roll could not be calculated from input
+            except:
+                msg = "Could not calculate that roll"
+
+            # Send the message 
+            await message.channel.send(msg)
+            
 
 client.run(TOKEN)
